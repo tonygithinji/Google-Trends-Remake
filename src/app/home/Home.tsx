@@ -30,7 +30,7 @@ const Home = () => {
 
     return (
         <>
-            {query.submitted && <Redirect to={`/explore/query?${query.searchTerm}`} />}
+            {query.submitted && <Redirect to={`/explore/?q=${query.searchTerm}`} />}
             <div className="flex justify-center mt-24">
                 <div>
                     <h1 className="text-5xl text-gray-700 mb-10">What is the world searching?</h1>
