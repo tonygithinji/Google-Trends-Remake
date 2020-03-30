@@ -8,7 +8,9 @@ const App = () => {
 	return (
 		<BrowserRouter>
 			<Nav />
-			<Routes />
+			<div className="container mx-auto">
+				<Routes />
+			</div>
 		</BrowserRouter>
 	);
 }
