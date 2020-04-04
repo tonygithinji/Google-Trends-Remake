@@ -21,6 +21,8 @@ export class GoogleTrendsAPI {
     @HttpCode(200)
     async interestOverTime(@Body() body: dto.Options) {
         try {
+            body.startTime = new Date(body.startTime);
+            body.endTime = new Date(body.endTime);
             const result = await googleTrends.interestOverTime({ ...body });
             const data = JSON.parse(result);
             return { status: "ok", data: data.default.timelineData, averages: data.default.averages };
