@@ -1,24 +1,30 @@
 import React, { useState, useEffect } from "react";
 import cx from "classnames";
-import { GoogleProperties, Countries, Categories } from "../../common/constants/constants";
+import queryString from "query-string";
+import { GoogleProperties } from "../../common/constants/constants";
+import useArrayFilter from "../../hooks/useArrayFilter";
+import useFetchQueryData from "../../hooks/useFetchQueryData";
 
-const Results = () => {
+const Results = (props: any) => {
+
     const [state, updateState] = useState({
         activeGoogleProperty: "",
         activeCategory: { text: "All Categories", id: 0 },
         activeRegion: { "code": "", "code3": "", "name": "Worldwide", "number": "" },
-        showFilters: false
+        showFilters: false,
+        keyword: ""
     });
-    let categories: any[] = Categories.filter(category => category.id !== state.activeCategory.id);
-    let regions: any[] = Countries.filter(region => region.code !== state.activeRegion.code);
+
+    const categories = useArrayFilter(state.activeCategory.id, "categories");
+    const regions = useArrayFilter(state.activeRegion.code, "regions");
+    // const data = useFetchQueryData(state);
 
     useEffect(() => {
-        categories = Categories.filter(category => category.id !== state.activeCategory.id);
-    }, [state.activeCategory]);
-
-    useEffect(() => {
-        regions = Countries.filter(region => region.code !== state.activeRegion.code);
-    }, [state.activeRegion]);
+        const query: any = queryString.parse(props.location.search);
+        updateState(prevState => {
+            return { ...prevState, keyword: query.q }
+        });
+    }, [props.location.search]);
 
     const changeActiveProperty = (property: string) => {
         updateState({
@@ -50,7 +56,7 @@ const Results = () => {
 
     return (
         <>
-            <h1 className="text-3xl text-center mt-6 mb-4">Query</h1>
+            <h1 className="text-3xl text-center mt-6 mb-4">{state.keyword}</h1>
             <hr />
             <div className="my-6 relative">
                 <ul className="flex justify-center">

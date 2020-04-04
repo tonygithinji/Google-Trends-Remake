@@ -1,18 +1,15 @@
 import React, { useState } from "react";
-import cx from "classnames";
 import { Redirect } from "react-router-dom";
+import cx from "classnames";
+import useAutocomplete from "../../hooks/useAutocomplete";
 
 const Home = () => {
 
-    const [focus, updateFocus] = useState(false);
     const [query, updateQuerySubmitted] = useState({
         searchTerm: "",
         submitted: false
     });
-
-    const handleInputFocus = (e: any) => {
-        updateFocus(true);
-    }
+    const autocompleteResults = useAutocomplete(query.searchTerm);
 
     const handleQuerySubmit = () => {
         updateQuerySubmitted({
@@ -36,15 +33,18 @@ const Home = () => {
                     <h1 className="text-5xl text-gray-700 mb-10">What is the world searching?</h1>
                     <form onSubmit={handleQuerySubmit}>
                         <input type="text" value={query.searchTerm} onChange={handleOnChange} placeholder="Enter a search term and find out" className={cx("text-gray-700 bg-gray-100 border-2 border-gray-300 py-2 px-4 w-full h-16 rounded-lg focus:bg-white focus:border-gray-400 focus:outline-none", {
-                            "border-b-0": focus,
-                            "rounded-b-none": focus
-                        })} onFocus={handleInputFocus} />
-                        {focus && (
-                            <div className="bg-white text-gray-700 border-2 border-gray-400 rounded-b-lg -mt-2 h-64">
+                            "border-b-0": autocompleteResults && autocompleteResults.length > 0,
+                            "rounded-b-none": autocompleteResults && autocompleteResults.length > 0
+                        })} />
+                        {autocompleteResults && autocompleteResults.length > 0 && (
+                            <div className="bg-white text-gray-700 border-2 border-gray-400 border-t-0 rounded-b-lg -mt-2 overflow-auto" style={{ maxHeight: "20rem" }}>
                                 <ul>
-                                    <li className="py-2 px-4 cursor-pointer hover:bg-gray-100">Search result 1</li>
-                                    <li className="py-2 px-4 cursor-pointer hover:bg-gray-100">Search result 2</li>
-                                    <li className="py-2 px-4 cursor-pointer hover:bg-gray-100">Search result 3</li>
+                                    {autocompleteResults.map((result: any) => (
+                                        <li key={result.mid} className="py-2 px-4 cursor-pointer hover:bg-gray-100">
+                                            <div>{result.title}</div>
+                                            <div className="text-gray-500 text-sm">{result.type}</div>
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
                         )}
