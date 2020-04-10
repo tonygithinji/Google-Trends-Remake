@@ -10976,6 +10976,19 @@ video {
   transition-duration: 1000ms;
 }
 
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #718096;
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #edf2f7;
+}
+
 @media (min-width: 640px) {
   .sm\:sr-only {
     position: absolute;

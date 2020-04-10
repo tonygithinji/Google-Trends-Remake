@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import cx from "classnames";
 import queryString from "query-string";
 import { GoogleProperties } from "../../common/constants/constants";
-import useArrayFilter from "../../hooks/useArrayFilter";
 import useFetchQueryData from "../../hooks/useFetchQueryData";
 import LineChart from "../../common/charts/LineChart";
+import Filters from "../../common/components/filters/Filters";
 
 const Results = (props: any) => {
 
@@ -19,14 +19,11 @@ const Results = (props: any) => {
         loading: true
     });
 
-    const categories = useArrayFilter(queryOptions.activeCategory.id, "categories");
-    const regions = useArrayFilter(queryOptions.activeRegion.code, "regions");
-
-    const toggleLoading = (status: boolean) => {
+    const toggleLoading = useCallback((status: boolean) => {
         updateState(prevState => {
             return { ...prevState, loading: status }
         });
-    }
+    }, []);
 
     const data = useFetchQueryData(queryOptions, toggleLoading);
 
@@ -82,83 +79,8 @@ const Results = (props: any) => {
                 </ul>
                 <button className={cx("absolute right-0 top-0 border border-gray-400 px-4 py-1 rounded-lg text-gray-800 focus:outline-none", { "bg-gray-200": state.showFilters })} onClick={toggleShowFilters}>Filters</button>
             </div>
-            <div className={cx("flex justify-around justify-evenly mb-4", { "block": state.showFilters, "hidden": !state.showFilters })}>
-                <div className="relative flex-1">
-                    <h3 className="font-medium mb-1">Region</h3>
-                    <button className="py-2 border border-gray-400 rounded-lg w-32 group hover:shadow focus:outline-none w-full">
-                        <div className="flex items-center justify-between px-3">
-                            <span className="text-gray-700 text-sm">{queryOptions.activeRegion.name}</span>
-                            <svg
-                                className="h-4 w-4 stroke-current text-gray-700 inline-block"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M6 9l6 6 6-6" />
-                            </svg>
-                        </div>
-                        <div className="hidden group-hover:block">
-                            <ul className="text-gray-700 text-sm text-left mt-2 h-64 overflow-auto">
-                                {regions.map(country => <li className="my-1 hover:bg-gray-100 px-3" key={country.code} onClick={() => handleRegionChanged(country)}>{country.name}</li>)}
-                            </ul>
-                        </div>
-                    </button>
-                </div>
 
-                <div className="relative flex-1 mx-4">
-                    <h3 className="font-medium mb-1">Period</h3>
-                    <button className="py-2 border border-gray-400 rounded-lg w-32 group hover:shadow focus:outline-none w-full">
-                        <div className="flex items-center justify-between px-3">
-                            <span className="text-gray-700 text-sm">Past 12 months</span>
-                            <svg
-                                className="h-4 w-4 stroke-current text-gray-700 inline-block"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M6 9l6 6 6-6" />
-                            </svg>
-                        </div>
-                        <div className="hidden group-hover:block">
-                            <ul className="text-gray-700 text-sm text-left mt-2">
-                                <li className="my-1 hover:bg-gray-100 px-3">This week</li>
-                                <li className="my-1 hover:bg-gray-100 px-3">This Year</li>
-                            </ul>
-                        </div>
-                    </button>
-                </div>
-
-                <div className="relative flex-1">
-                    <h3 className="font-medium mb-1">Category</h3>
-                    <button className="py-2 border border-gray-400 rounded-lg w-32 group hover:shadow focus:outline-none w-full">
-                        <div className="flex items-center justify-between px-3">
-                            <span className="text-gray-700 text-sm">{queryOptions.activeCategory.text}</span>
-                            <svg
-                                className="h-4 w-4 stroke-current text-gray-700 inline-block"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M6 9l6 6 6-6" />
-                            </svg>
-                        </div>
-                        <div className="hidden group-hover:block">
-                            <ul className="text-gray-700 text-sm text-left mt-2 h-64 overflow-auto">
-                                {categories.map((category: any) => <li className="my-1 hover:bg-gray-100 px-3" key={category.id} onClick={() => handleCategoryChanged(category)}>{category.text}</li>)}
-                            </ul>
-                        </div>
-                    </button>
-                </div>
-            </div>
+            <Filters queryOptions={queryOptions} showFilters={state.showFilters} handleCategoryChanged={handleCategoryChanged} handleRegionChanged={handleRegionChanged} />
 
             <div className="w-full shadow border border-gray-200 rounded-lg">
                 {state.loading && <div className="text-center">Loading</div>}

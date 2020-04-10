@@ -31,7 +31,7 @@ export default function useFetchQueryData(options: any, toggleLoading: any) {
                     toggleLoading(false);
                 });
         }
-    }, [options]);
+    }, [options, toggleLoading]);
 
     return data;
 }
