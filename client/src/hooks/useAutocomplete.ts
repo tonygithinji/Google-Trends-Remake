@@ -13,7 +13,6 @@ export default function useAutocomplete(searchTerm: string) {
                 return { ...prevState, loading: true }
             });
             axios.post("/autocomplete", { query: searchTerm }).then((response: any) => {
-                console.log("response", response.data);
                 const { status, data } = response.data;
                 if (status === "ok") {
                     updateAutocomplete(prevState => {
