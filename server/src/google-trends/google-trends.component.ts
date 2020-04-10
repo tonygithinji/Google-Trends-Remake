@@ -23,9 +23,15 @@ export class GoogleTrendsAPI {
         try {
             body.startTime = new Date(body.startTime);
             body.endTime = new Date(body.endTime);
-            const result = await googleTrends.interestOverTime({ ...body });
-            const data = JSON.parse(result);
-            return { status: "ok", data: data.default.timelineData, averages: data.default.averages };
+            const response = await googleTrends.interestOverTime({ ...body });
+            const result = JSON.parse(response);
+
+            const data = [];
+            result.default.timelineData.forEach(item => {
+                data.push({ x: item.formattedAxisTime, y: item.formattedValue[0] });
+            });
+
+            return { status: "ok", data };
         } catch (error) {
             console.log("ERROR :: ", error);
             console.log('error message', error.message);
