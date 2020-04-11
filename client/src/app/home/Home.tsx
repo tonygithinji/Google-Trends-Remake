@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import cx from "classnames";
 import useAutocomplete from "../../hooks/useAutocomplete";
+import useDebounce from "../../hooks/useDebounce";
 
 const Home = () => {
 
@@ -9,7 +10,8 @@ const Home = () => {
         searchTerm: "",
         submitted: false
     });
-    const autocompleteResults = useAutocomplete(query.searchTerm);
+
+    const autocompleteResults = useAutocomplete(useDebounce(query.searchTerm, 500));
 
     const handleQuerySubmit = () => {
         updateQuerySubmitted({
