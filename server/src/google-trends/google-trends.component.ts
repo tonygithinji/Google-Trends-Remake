@@ -39,4 +39,27 @@ export class GoogleTrendsAPI {
             return { status: "error" };
         }
     }
+
+    @Post("interest-by-region")
+    @HttpCode(200)
+    async interestByRegion(@Body() body: dto.Options) {
+        try {
+            body.startTime = new Date(body.startTime);
+            body.endTime = new Date(body.endTime);
+            const response = await googleTrends.interestByRegion({ ...body });
+            const result = JSON.parse(response);
+
+            const data = [];
+            result.default.geoMapData.forEach(item => {
+                data.push({ id: item.geoCode, value: item.value[0] });
+            });
+
+            return { status: "ok", data };
+        } catch (error) {
+            console.log("ERROR :: ", error);
+            console.log('error message', error.message);
+            console.log('request body', error.requestBody);
+            return { status: "error" };
+        }
+    }
 }
