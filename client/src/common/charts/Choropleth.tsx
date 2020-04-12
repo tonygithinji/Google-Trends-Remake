@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { ResponsiveChoropleth } from "@nivo/geo";
 import { D3MapFeatures } from "../constants/constants"
 

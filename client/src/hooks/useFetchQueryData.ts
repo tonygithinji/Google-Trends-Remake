@@ -31,7 +31,7 @@ export default function useFetchQueryData(options: any, url: string, isLoadingSt
                     toggleLoading(false, isLoadingStatusKey);
                 });
         }
-    }, [options, url, toggleLoading]);
+    }, [options, url, isLoadingStatusKey, toggleLoading]);
 
     return data;
 }
