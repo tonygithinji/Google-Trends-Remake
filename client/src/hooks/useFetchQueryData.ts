@@ -3,11 +3,11 @@ import axios from "../utils/axios";
 import { QueryOptions } from "../common/constants/types";
 import { Utils } from "../utils/utils";
 
-export default function useFetchQueryData(options: any, toggleLoading: any) {
+export default function useFetchQueryData(options: any, url: string, isLoadingStatusKey: string, toggleLoading: any) {
     const [data, updateData] = useState([]);
 
     useEffect(() => {
-        toggleLoading(true);
+        toggleLoading(true, isLoadingStatusKey);
         const { startDate, endDate } = Utils.calculateDateRange(options.period);
         const queryOptions = new QueryOptions();
         queryOptions.keyword = options.keyword;
@@ -19,7 +19,7 @@ export default function useFetchQueryData(options: any, toggleLoading: any) {
 
         console.log("called useFetchQueryData with queryOptions >> ", queryOptions);
         if (queryOptions.keyword) {
-            axios.post("/interest-over-time", { ...queryOptions })
+            axios.post(url, { ...queryOptions })
                 .then(response => {
                     const { status, data } = response.data;
 
@@ -28,10 +28,10 @@ export default function useFetchQueryData(options: any, toggleLoading: any) {
                     } else {
                         updateData([]);
                     }
-                    toggleLoading(false);
+                    toggleLoading(false, isLoadingStatusKey);
                 });
         }
-    }, [options, toggleLoading]);
+    }, [options, url, toggleLoading]);
 
     return data;
 }

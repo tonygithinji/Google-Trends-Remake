@@ -52,6 +52,7 @@ const LineChart = ({ data, id, color }: any) => {
             )}
             useMesh={true}
             enableGridX={false}
+            animate={true}
         />
     );
 }

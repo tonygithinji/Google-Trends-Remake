@@ -3,8 +3,9 @@ import cx from "classnames";
 import queryString from "query-string";
 import { GoogleProperties } from "../../common/constants/constants";
 import useFetchQueryData from "../../hooks/useFetchQueryData";
-import LineChart from "../../common/charts/LineChart";
 import Filters from "../../common/components/filters/Filters";
+import LineChart from "../../common/charts/LineChart";
+import Choropleth from "../../common/charts/Choropleth";
 
 const Results = (props: any) => {
 
@@ -16,16 +17,18 @@ const Results = (props: any) => {
     });
     const [state, updateState] = useState({
         showFilters: false,
-        loading: true
+        interestOverTimeLoading: true,
+        interestByRegionLoading: true,
     });
 
-    const toggleLoading = useCallback((status: boolean) => {
+    const toggleLoading = useCallback((status: boolean, key: string) => {
         updateState(prevState => {
-            return { ...prevState, loading: status }
+            return { ...prevState, [key]: status }
         });
     }, []);
 
-    const data = useFetchQueryData(queryOptions, toggleLoading);
+    const interestOverTimeData = useFetchQueryData(queryOptions, "/interest-over-time", "interestOverTimeLoading", toggleLoading);
+    const interestByRegionData = useFetchQueryData(queryOptions, "/interest-by-region", "interestByRegionLoading", toggleLoading);
 
     useEffect(() => {
         const query: any = queryString.parse(props.location.search);
@@ -82,16 +85,31 @@ const Results = (props: any) => {
 
             <Filters queryOptions={queryOptions} showFilters={state.showFilters} handleCategoryChanged={handleCategoryChanged} handleRegionChanged={handleRegionChanged} />
 
-            <div className="w-full shadow border border-gray-200 rounded-lg">
-                {state.loading && <div className="text-center">Loading</div>}
-                {!state.loading && (
+            <div className="w-full shadow border border-gray-200 rounded-lg mb-6">
+                {state.interestOverTimeLoading && <div className="text-center">Loading</div>}
+                {!state.interestOverTimeLoading && (
                     <>
                         <div className="py-4 px-4">
                             <h2 className="text-xl">Interest over time</h2>
 
                         </div>
                         <div style={{ height: "24rem" }}>
-                            <LineChart data={data} id="results" color="hsl(180, 64%, 58%)" />
+                            <LineChart data={interestOverTimeData} id="results" color="hsl(180, 64%, 58%)" />
+                        </div>
+                    </>
+                )}
+            </div>
+
+            <div className="w-full shadow border border-gray-200 rounded-lg mb-6">
+                {state.interestByRegionLoading && <div className="text-center">Loading</div>}
+                {!state.interestByRegionLoading && (
+                    <>
+                        <div className="py-4 px-4">
+                            <h2 className="text-xl">Interest by region</h2>
+
+                        </div>
+                        <div style={{ height: "32rem" }}>
+                            <Choropleth data={interestByRegionData} color="hsl(180, 64%, 58%)" />
                         </div>
                     </>
                 )}
